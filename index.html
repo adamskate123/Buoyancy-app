@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Does It Float? 🌊</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      background: linear-gradient(180deg, #87ceeb 0%, #b0e0ff 60%, #e0f7ff 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* ---------- SKY / CLOUDS ---------- */
+    #sky {
+      position: relative;
+      height: 140px;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 50px;
+      opacity: 0.9;
+      animation: drift linear infinite;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+    .c1 { width: 100px; height: 36px; top: 30px; animation-duration: 28s; animation-delay: 0s; }
+    .c1::before { width: 50px; height: 50px; top: -24px; left: 14px; }
+    .c1::after  { width: 36px; height: 36px; top: -18px; left: 46px; }
+
+    .c2 { width: 70px; height: 26px; top: 60px; animation-duration: 22s; animation-delay: -10s; }
+    .c2::before { width: 36px; height: 36px; top: -18px; left: 10px; }
+    .c2::after  { width: 26px; height: 26px; top: -14px; left: 34px; }
+
+    .c3 { width: 120px; height: 40px; top: 20px; animation-duration: 34s; animation-delay: -16s; }
+    .c3::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+    .c3::after  { width: 44px; height: 44px; top: -22px; left: 60px; }
+
+    @keyframes drift {
+      from { transform: translateX(-200px); }
+      to   { transform: translateX(110vw); }
+    }
+
+    /* ---------- TITLE ---------- */
+    h1 {
+      text-align: center;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: #1a4f7a;
+      text-shadow: 2px 2px 0 #fff, 3px 3px 0 #87ceeb;
+      margin: 6px 0 4px;
+    }
+    #subtitle {
+      text-align: center;
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      color: #2a6fa0;
+      margin-bottom: 10px;
+    }
+
+    /* ---------- MAIN LAYOUT ---------- */
+    #main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 20px;
+    }
+
+    /* ---------- OBJECT TRAY ---------- */
+    #tray-label {
+      font-size: clamp(1rem, 2.8vw, 1.3rem);
+      color: #1a4f7a;
+      font-weight: bold;
+    }
+
+    #tray {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.55);
+      border: 3px dashed #70b8e0;
+      border-radius: 20px;
+      padding: 14px 18px;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .obj-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: white;
+      border: 3px solid #70b8e0;
+      border-radius: 16px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+      min-width: 76px;
+    }
+    .obj-btn:hover  { transform: scale(1.12); box-shadow: 0 4px 14px rgba(0,120,200,0.25); }
+    .obj-btn:active { transform: scale(0.96); }
+    .obj-btn .icon  { font-size: 2.4rem; line-height: 1; }
+    .obj-btn .name  { font-size: 0.82rem; color: #1a4f7a; font-weight: bold; }
+
+    /* ---------- TANK ---------- */
+    #tank-wrap {
+      position: relative;
+      width: min(680px, 96vw);
+    }
+
+    #tank {
+      position: relative;
+      width: 100%;
+      height: clamp(280px, 45vw, 380px);
+      border: 5px solid #2a7abf;
+      border-radius: 0 0 18px 18px;
+      border-top: none;
+      overflow: hidden;
+      background: linear-gradient(180deg, transparent 0%, transparent 30%, #006994aa 30%, #0077aa 100%);
+      cursor: pointer;
+    }
+
+    /* Water shimmer */
+    #water-surface {
+      position: absolute;
+      top: 30%;
+      left: 0; right: 0;
+      height: 22px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.0) 0%,
+        rgba(255,255,255,0.45) 30%,
+        rgba(255,255,255,0.0) 60%,
+        rgba(255,255,255,0.35) 85%,
+        rgba(255,255,255,0.0) 100%);
+      animation: shimmer 3s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 5;
+    }
+    @keyframes shimmer {
+      from { background-position: 0% 50%; opacity: 0.6; }
+      to   { background-position: 100% 50%; opacity: 1; }
+    }
+
+    /* Bubbles */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: 1.5px solid rgba(255,255,255,0.7);
+      pointer-events: none;
+      animation: rise linear forwards;
+    }
+    @keyframes rise {
+      from { transform: translateY(0) scale(1); opacity: 0.8; }
+      to   { transform: translateY(-260px) scale(0.4); opacity: 0; }
+    }
+
+    /* Items in tank */
+    .tank-item {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2.6rem;
+      line-height: 1;
+      transition: top 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      z-index: 10;
+    }
+    .tank-item .label {
+      font-size: 0.65rem;
+      font-family: inherit;
+      color: white;
+      text-shadow: 1px 1px 2px #000;
+      white-space: nowrap;
+      font-weight: bold;
+    }
+    .tank-item.splash { animation: splashAnim 0.4s ease-out; }
+    @keyframes splashAnim {
+      0%   { transform: scale(0.5) translateY(-30px); opacity: 0.6; }
+      60%  { transform: scale(1.25) translateY(4px); }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.7);
+      pointer-events: none;
+      animation: rippleAnim 0.7s ease-out forwards;
+      z-index: 6;
+    }
+    @keyframes rippleAnim {
+      from { width: 10px; height: 10px; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      to   { width: 80px; height: 30px; opacity: 0; transform: translate(-50%,-50%) scale(1); }
+    }
+
+    /* ---------- RESULT BANNER ---------- */
+    #result {
+      min-height: 52px;
+      width: min(680px, 96vw);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      font-weight: bold;
+      text-align: center;
+      padding: 8px 16px;
+      transition: all 0.4s;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    #result.float-msg { background: linear-gradient(135deg, #43d17a, #1aad5e); }
+    #result.sink-msg  { background: linear-gradient(135deg, #e05a5a, #b72f2f); }
+    #result.idle-msg  { background: rgba(255,255,255,0.4); color: #2a6fa0; text-shadow: none; }
+
+    /* ---------- CLEAR BUTTON ---------- */
+    #clear-btn {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: bold;
+      background: #ff8c42;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #c05a10;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    #clear-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 0 #c05a10; }
+    #clear-btn:active { transform: translateY(2px);  box-shadow: 0 2px 0 #c05a10; }
+
+    /* ---------- FUN FACT ---------- */
+    #funfact {
+      max-width: 640px;
+      background: rgba(255,255,255,0.6);
+      border-left: 5px solid #ffd700;
+      border-radius: 0 14px 14px 0;
+      padding: 10px 16px;
+      font-size: clamp(0.85rem, 2.2vw, 1rem);
+      color: #1a4f7a;
+      width: 100%;
+    }
+    #funfact span { font-size: 1.3rem; }
+  </style>
+</head>
+<body>
+
+<div id="sky">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+</div>
+
+<h1>Does It Float? 🌊</h1>
+<p id="subtitle">Tap an object, then tap the water!</p>
+
+<div id="main">
+
+  <p id="tray-label">Pick something to drop in! 👇</p>
+  <div id="tray"></div>
+
+  <div id="tank-wrap">
+    <div id="tank">
+      <div id="water-surface"></div>
+    </div>
+  </div>
+
+  <div id="result" class="idle-msg">← Tap an object above to get started!</div>
+
+  <button id="clear-btn">🧹 Clear the water</button>
+
+  <div id="funfact">
+    <span>💡</span> <strong>Did you know?</strong>
+    Things that are lighter than water will float on top.
+    Things that are heavier than water sink to the bottom!
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+const OBJECTS = [
+  { id: 'duck',     icon: '🦆', name: 'Duck',      floats: true,  fact: 'Ducks have oily feathers that help them float!' },
+  { id: 'rock',     icon: '🪨', name: 'Rock',      floats: false, fact: 'Rocks are much heavier than water, so they sink!' },
+  { id: 'apple',    icon: '🍎', name: 'Apple',     floats: true,  fact: 'Apples are full of air pockets — that\'s why they float!' },
+  { id: 'anchor',   icon: '⚓', name: 'Anchor',    floats: false, fact: 'Anchors are made of heavy metal and sink deep down!' },
+  { id: 'boat',     icon: '⛵', name: 'Boat',      floats: true,  fact: 'Boats are hollow and spread their weight over lots of water!' },
+  { id: 'bowling',  icon: '🎳', name: 'Ball',      floats: false, fact: 'A bowling ball is so heavy it always sinks!' },
+  { id: 'leaf',     icon: '🍃', name: 'Leaf',      floats: true,  fact: 'Leaves are super light and thin so they rest on water!' },
+  { id: 'coin',     icon: '🪙', name: 'Coin',      floats: false, fact: 'Metal coins are denser than water and sink quickly!' },
+];
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let selectedObj = null;   // object config that was clicked in tray
+let tankItems   = [];     // { obj, el, x } objects currently in tank
+
+// ─────────────────────────────────────────────
+//  BUILD TRAY
+// ─────────────────────────────────────────────
+const tray = document.getElementById('tray');
+OBJECTS.forEach(obj => {
+  const btn = document.createElement('button');
+  btn.className = 'obj-btn';
+  btn.innerHTML = `<span class="icon">${obj.icon}</span><span class="name">${obj.name}</span>`;
+  btn.dataset.id = obj.id;
+  btn.addEventListener('click', () => selectObj(obj, btn));
+  tray.appendChild(btn);
+});
+
+function selectObj(obj, btn) {
+  // Deselect previous
+  document.querySelectorAll('.obj-btn').forEach(b => {
+    b.style.outline = '';
+    b.style.background = 'white';
+  });
+  if (selectedObj === obj) {
+    selectedObj = null;
+    setResult('idle', '← Tap an object above to get started!');
+    document.getElementById('subtitle').textContent = 'Tap an object, then tap the water!';
+    return;
+  }
+  selectedObj = obj;
+  btn.style.outline = '3px solid #ff8c42';
+  btn.style.background = '#fff7ee';
+  setResult('idle', `You picked ${obj.icon} ${obj.name}! Now tap the water! 💧`);
+  document.getElementById('subtitle').textContent = 'Now tap the water below! 👇';
+}
+
+// ─────────────────────────────────────────────
+//  TANK CLICK
+// ─────────────────────────────────────────────
+const tank = document.getElementById('tank');
+tank.addEventListener('click', e => {
+  if (!selectedObj) {
+    setResult('idle', '← First pick an object from the shelf!');
+    document.getElementById('subtitle').textContent = 'Tap an object, then tap the water!';
+    return;
+  }
+  dropObject(selectedObj, e);
+});
+
+function dropObject(obj, e) {
+  const rect   = tank.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const tankW  = rect.width;
+  const tankH  = rect.height;
+
+  // Spread items out so they don't all pile up
+  const slot   = tankW * 0.12 + Math.random() * tankW * 0.76;
+  const xPct   = (slot / tankW) * 100;
+
+  // Water surface is at 30% of tank height
+  const surfaceY = tankH * 0.30;
+
+  const el = document.createElement('div');
+  el.className = 'tank-item';
+  el.innerHTML = `${obj.icon}<span class="label">${obj.name}</span>`;
+  el.style.left = `calc(${xPct}% - 24px)`;
+  el.style.top  = '0px';
+  tank.appendChild(el);
+
+  // Ripple at water surface
+  spawnRipple(slot, surfaceY);
+
+  // Initial drop position = near top
+  // Then animate to float/sink position
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.classList.add('splash');
+      if (obj.floats) {
+        // Float: sit on surface (top 28% so emoji straddles the line)
+        el.style.top = `${tankH * 0.18}px`;
+        spawnBubbles(slot, surfaceY, 3);
+      } else {
+        // Sink: go to bottom
+        el.style.top = `${tankH * 0.72}px`;
+        spawnBubbles(slot, surfaceY, 8);
+      }
+    });
+  });
+
+  // Click item to remove it
+  el.addEventListener('click', ev => {
+    ev.stopPropagation();
+    el.style.transition = 'opacity 0.3s';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 320);
+  });
+
+  tankItems.push({ obj, el });
+
+  // Show result
+  if (obj.floats) {
+    setResult('float', `${obj.icon} ${obj.name} FLOATS! 🎉 ${obj.fact}`);
+  } else {
+    setResult('sink', `${obj.icon} ${obj.name} sinks! 😲 ${obj.fact}`);
+  }
+
+  // Reset selection
+  selectedObj = null;
+  document.querySelectorAll('.obj-btn').forEach(b => {
+    b.style.outline = '';
+    b.style.background = 'white';
+  });
+  document.getElementById('subtitle').textContent = 'Try another one!';
+}
+
+// ─────────────────────────────────────────────
+//  VISUAL EFFECTS
+// ─────────────────────────────────────────────
+function spawnRipple(x, y) {
+  const r = document.createElement('div');
+  r.className = 'ripple';
+  r.style.left = x + 'px';
+  r.style.top  = y + 'px';
+  tank.appendChild(r);
+  setTimeout(() => r.remove(), 750);
+}
+
+function spawnBubbles(x, startY, count) {
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      const size = 5 + Math.random() * 10;
+      b.style.width  = size + 'px';
+      b.style.height = size + 'px';
+      b.style.left   = (x - 20 + Math.random() * 40) + 'px';
+      b.style.top    = startY + 'px';
+      b.style.animationDuration = (1.2 + Math.random() * 1.4) + 's';
+      tank.appendChild(b);
+      setTimeout(() => b.remove(), 2800);
+    }, i * 160);
+  }
+}
+
+// ─────────────────────────────────────────────
+//  RESULT BANNER
+// ─────────────────────────────────────────────
+function setResult(type, msg) {
+  const el = document.getElementById('result');
+  el.className = '';
+  el.textContent = msg;
+  if (type === 'float') el.classList.add('float-msg');
+  else if (type === 'sink') el.classList.add('sink-msg');
+  else el.classList.add('idle-msg');
+}
+
+// ─────────────────────────────────────────────
+//  CLEAR BUTTON
+// ─────────────────────────────────────────────
+document.getElementById('clear-btn').addEventListener('click', () => {
+  tankItems.forEach(({ el }) => {
+    el.style.transition = 'opacity 0.25s';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 280);
+  });
+  tankItems = [];
+  selectedObj = null;
+  document.querySelectorAll('.obj-btn').forEach(b => {
+    b.style.outline = '';
+    b.style.background = 'white';
+  });
+  setResult('idle', '← Tap an object above to get started!');
+  document.getElementById('subtitle').textContent = 'Tap an object, then tap the water!';
+});
+
+// ─────────────────────────────────────────────
+//  AMBIENT FLOATING ANIMATION for items already in tank
+// ─────────────────────────────────────────────
+setInterval(() => {
+  tankItems.forEach(({ obj, el }) => {
+    if (!obj.floats) return;
+    const curr = parseFloat(el.style.top) || 0;
+    const nudge = (Math.random() - 0.5) * 6;
+    const tankH = tank.getBoundingClientRect().height;
+    const newTop = Math.max(tankH * 0.10, Math.min(tankH * 0.26, curr + nudge));
+    el.style.transition = 'top 1.8s ease-in-out';
+    el.style.top = newTop + 'px';
+  });
+}, 1800);
+</script>
+</body>
+</html>
