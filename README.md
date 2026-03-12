@@ -17,32 +17,34 @@ An interactive buoyancy visualization for kids aged 5–7. Tap objects to drop t
 
 ## Opening on iOS (iPhone / iPad)
 
-### Option 1 — Transfer via AirDrop
-1. On your Mac, right-click `index.html` → Share → AirDrop → select your iPhone/iPad
-2. On the iOS device, tap **Open in Safari** when prompted
+> **Note:** iOS treats `.html` files as plain text, so Safari will **not** appear in the share sheet when opening a file directly. Use one of the options below instead.
 
-### Option 2 — Transfer via iCloud Drive
-1. Save `index.html` to your iCloud Drive folder on your Mac or PC
-2. On your iPhone/iPad, open the **Files** app
-3. Navigate to iCloud Drive and tap `index.html`
-4. Tap **Open in Safari** (or tap the share icon and choose Safari)
+### Option 1 — Quick Look in Files app (easiest, no Wi-Fi needed)
+1. Get `index.html` onto your device via AirDrop or iCloud Drive:
+   - **AirDrop:** On your Mac, right-click `index.html` → Share → AirDrop → select your device
+   - **iCloud Drive:** Copy the file to iCloud Drive on your Mac, then open the Files app on iOS
+2. In the **Files** app, **long-press** `index.html`
+3. Tap **Quick Look** from the menu that appears
+4. The app will render and run fully inside the Quick Look preview
 
-### Option 3 — Host locally on the same Wi-Fi network
-1. On your computer, open a terminal and run:
+### Option 2 — Host locally over Wi-Fi (best experience)
+1. Make sure your iPhone/iPad and computer are on the **same Wi-Fi network**
+2. On your computer, open a terminal and run:
    ```
    cd /path/to/Buoyancy-app
    python3 -m http.server 8080
    ```
-2. Find your computer's local IP address (e.g. `192.168.1.5`):
-   - **Mac:** System Settings → Wi-Fi → Details
+3. Find your computer's local IP address:
+   - **Mac:** System Settings → Wi-Fi → Details → IP Address
    - **Windows:** Run `ipconfig` in Command Prompt, look for IPv4 Address
-3. On your iPhone/iPad (connected to the same Wi-Fi), open Safari and go to:
+4. On your iPhone/iPad, open **Safari** and go to:
    ```
    http://192.168.1.5:8080
    ```
+   *(replace `192.168.1.5` with your computer's actual IP)*
 
-### Option 4 — Add to Home Screen (recommended for kids)
-Once the page is open in Safari:
+### Option 3 — Add to Home Screen (recommended for kids)
+Once the page is open via Option 2:
 1. Tap the **Share** button (box with arrow at the bottom of Safari)
 2. Scroll down and tap **Add to Home Screen**
 3. Tap **Add**
