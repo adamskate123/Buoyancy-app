@@ -94,6 +94,7 @@
       padding: 14px 18px;
       max-width: 680px;
       width: 100%;
+      min-height: 110px;
     }
 
     .obj-btn {
@@ -107,13 +108,15 @@
       padding: 10px 14px;
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
-      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
       min-width: 76px;
+      text-align: center;
     }
     .obj-btn:hover  { transform: scale(1.12); box-shadow: 0 4px 14px rgba(0,120,200,0.25); }
     .obj-btn:active { transform: scale(0.96); }
-    .obj-btn .icon  { font-size: 2.4rem; line-height: 1; }
-    .obj-btn .name  { font-size: 0.82rem; color: #1a4f7a; font-weight: bold; }
+    .obj-btn .icon  { font-size: 2.4rem; line-height: 1.1; display: block; }
+    .obj-btn .name  { font-size: 0.82rem; color: #1a4f7a; font-weight: bold; display: block; }
 
     /* ---------- TANK ---------- */
     #tank-wrap {
@@ -131,6 +134,8 @@
       overflow: hidden;
       background: linear-gradient(180deg, transparent 0%, transparent 30%, #006994aa 30%, #0077aa 100%);
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* Water shimmer */
@@ -320,11 +325,14 @@ let tankItems   = [];     // { obj, el, x } objects currently in tank
 // ─────────────────────────────────────────────
 const tray = document.getElementById('tray');
 OBJECTS.forEach(obj => {
-  const btn = document.createElement('button');
+  const btn = document.createElement('div');
   btn.className = 'obj-btn';
+  btn.setAttribute('role', 'button');
+  btn.setAttribute('tabindex', '0');
   btn.innerHTML = `<span class="icon">${obj.icon}</span><span class="name">${obj.name}</span>`;
   btn.dataset.id = obj.id;
   btn.addEventListener('click', () => selectObj(obj, btn));
+  btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') selectObj(obj, btn); });
   tray.appendChild(btn);
 });
 
