@@ -279,7 +279,16 @@
 <div id="main">
 
   <p id="tray-label">Pick something to drop in! 👇</p>
-  <div id="tray"></div>
+  <div id="tray">
+    <div class="obj-btn" role="button" tabindex="0" data-id="duck"><span class="icon">🦆</span><span class="name">Duck</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="rock"><span class="icon">🪨</span><span class="name">Rock</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="apple"><span class="icon">🍎</span><span class="name">Apple</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="anchor"><span class="icon">⚓</span><span class="name">Anchor</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="boat"><span class="icon">⛵</span><span class="name">Boat</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="bowling"><span class="icon">🎳</span><span class="name">Ball</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="leaf"><span class="icon">🍃</span><span class="name">Leaf</span></div>
+    <div class="obj-btn" role="button" tabindex="0" data-id="coin"><span class="icon">🪙</span><span class="name">Coin</span></div>
+  </div>
 
   <div id="tank-wrap">
     <div id="tank">
@@ -321,19 +330,13 @@ let selectedObj = null;   // object config that was clicked in tray
 let tankItems   = [];     // { obj, el, x } objects currently in tank
 
 // ─────────────────────────────────────────────
-//  BUILD TRAY
+//  WIRE UP TRAY (buttons are pre-rendered in HTML)
 // ─────────────────────────────────────────────
-const tray = document.getElementById('tray');
-OBJECTS.forEach(obj => {
-  const btn = document.createElement('div');
-  btn.className = 'obj-btn';
-  btn.setAttribute('role', 'button');
-  btn.setAttribute('tabindex', '0');
-  btn.innerHTML = `<span class="icon">${obj.icon}</span><span class="name">${obj.name}</span>`;
-  btn.dataset.id = obj.id;
+document.querySelectorAll('.obj-btn').forEach(btn => {
+  const obj = OBJECTS.find(o => o.id === btn.dataset.id);
+  if (!obj) return;
   btn.addEventListener('click', () => selectObj(obj, btn));
   btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') selectObj(obj, btn); });
-  tray.appendChild(btn);
 });
 
 function selectObj(obj, btn) {
